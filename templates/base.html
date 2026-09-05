@@ -41,25 +41,27 @@
   </head>
   <body>
     {% if user.is_authenticated %}
-    <header>
-      <nav>
-        <a href="{% url 'menu' %}">Menú</a>
-        <a href="{% url 'client_list' %}">Clientes</a>
-        <a href="{% url 'company_list' %}">Empresas</a>
-        {% if user.is_staff %}
-        <a href="{% url 'comercial_list' %}">Comerciales</a>
-        {% endif %}
-      </nav>
-      <form method="post" action="{% url 'logout' %}" style="display: inline">
-        {% csrf_token %}
-        <button type="submit" class="button button-m primary-button">
-          Cerrar sesión
-        </button>
-      </form>
+    <header class="flex center al-center">
+      <div class="flex al-center sp-btween max-900 w100">
+        <nav>
+          <a href="{% url 'menu' %}">Menú</a>
+          <a href="{% url 'client_list' %}">Clientes</a>
+          <a href="{% url 'company_list' %}">Empresas</a>
+          {% if user.is_staff %}
+          <a href="{% url 'comercial_list' %}">Comerciales</a>
+          {% endif %}
+        </nav>
+        <form method="post" action="{% url 'logout' %}" style="display: inline">
+          {% csrf_token %}
+          <button type="submit" class="button button-m primary-button">
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
     </header>
     {% endif %}
 
-    <main>
+    <main class="max-900">
       {% block content %}
       <!-- contenido de cada template hijo -->
       {% endblock %}

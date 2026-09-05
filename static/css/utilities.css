@@ -2,6 +2,10 @@
   display: flex;
 }
 
+.center {
+  justify-content: center;
+}
+
 .sp-btween {
   justify-content: space-between;
 }
@@ -16,4 +20,16 @@
 
 .m-inl-10 {
   margin-inline-start: 10px;
+}
+
+.m-inl-auto {
+  margin-inline: auto;
+}
+
+.max-900 {
+  max-width: 900px;
+}
+
+.w100 {
+  width: 100%;
 }
