@@ -1,0 +1,31 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>Comerciales</h1>
+
+<a href="{% url 'comercial_create' %}">Nuevo comercial</a> 
+
+<form method="get">
+  <input type="text" name="q" value="{{ query }}" placeholder="Username, email, nombre o apellido">
+  <button type="submit">Buscar</button>
+</form>
+<ul>
+  {% for comercial in comerciales %}
+  <li>
+    {{ comercial.username }} ({{ comercial.email }})
+    {% if not comercial.is_active %}
+     - INACTIVO 
+    {% endif %}
+    <a href="{% url 'comercial_update' comercial.pk %}">Editar</a>
+    {% if comercial.is_active %}
+    <a href="{% url 'comercial_deactivate' comercial.pk %}">Desactivar</a>
+    {% endif %}
+  </li>
+  {% empty %}
+  <li>No hay comerciales cargados.</li>
+  {% endfor %}
+</ul>

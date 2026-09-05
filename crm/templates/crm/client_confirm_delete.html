@@ -1,0 +1,12 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'client_list' %}">&larr; Volver a clientes</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>¿Borrar a {{ client.nombre }} {{ client.apellido }}?</h1>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirmar</button>
+</form>

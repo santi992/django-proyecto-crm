@@ -1,0 +1,18 @@
+
+<form method="post" action="{% url 'logout' %}" style="display: inline">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<h1>Menú CRM</h1>
+
+<ul>
+  <li><a href="{% url 'client_list' %}">Clientes</a></li>
+  <li><a href="{% url 'company_list' %}">Empresas</a></li>
+  {% if user.is_staff %}
+  <!-- "user" está disponible automáticamente en cualquier template,
+         Django lo inyecta solo (es el usuario logueado actual) -->
+  <li><a href="{% url 'comercial_list' %}">Comerciales</a></li>
+  {% endif %}
+  <li>Estadísticas (próximamente)</li>
+</ul>

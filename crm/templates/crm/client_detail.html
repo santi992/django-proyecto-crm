@@ -1,0 +1,29 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'client_list' %}">&larr; Volver a clientes</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>{{ client.nombre }} {{ client.apellido}}</h1>
+<p>Email: {{ client.email }}</p>
+<p>Empresa: {{ client.company }}</p>
+<p>Comercial: {{ client.comercial }}</p>
+<a href="{% url 'client_update' client.pk %}">Editar</a>
+<a href="{% url 'client_delete' client.pk %}">Borrar</a>
+
+<h2>Interacciones</h2>
+<a href="{% url 'interaction_create' client.pk %}">Nueva interacción</a>
+<ul>
+  <!-- client.interactions viene del related_name que definimos en el modelo -->
+  {% for interaction in client.interactions.all %}
+  <li>
+    {{ interaction.fecha|date:"d/m/Y H:i" }} - {{ interaction.tipo }} -
+    {{interaction.comercial }}
+    <p>{{ interaction.notas }}</p>
+    <a href="{% url 'interaction_delete' interaction.pk %}">Borrar</a>
+  </li>
+  {% empty %}
+  <li>Sin interacciones todavía.</li>
+  {% endfor %}
+</ul>

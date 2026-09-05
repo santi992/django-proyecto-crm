@@ -1,0 +1,25 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>Empresas</h1>
+
+<a href="{% url 'company_create' %}">Nueva empresa</a> 
+
+<form method="get">
+  <input type="text" name="q" value="{{ query }}" placeholder="Nombre o sector">
+  <button type="submit">Buscar</button>
+</form>
+<ul>
+  {% for company in companies %}
+  <li>
+    <a href="{% url 'company_detail' company.pk %}">{{ company.nombre }}</a>
+    - {{ company.sector }}
+  </li>
+  {% empty %}
+  <li>No hay empresas cargadas.</li>
+  {% endfor %}
+</ul>

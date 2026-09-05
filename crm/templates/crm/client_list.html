@@ -1,0 +1,31 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>Clientes</h1>
+
+<a href="{% url 'client_create' %}">Nuevo cliente</a> 
+
+<form method="get">
+  <input
+    type="text"
+    name="q"
+    value="{{ query }}"
+    placeholder="Nombre, email o empresa"
+  />
+  <button type="submit">Buscar</button>
+</form>
+
+<ul>
+  {% for client in clients %}
+  <li>
+    <a href="{% url 'client_detail' client.pk %}">{{ client.nombre }} {{ client.apellido }}</a>
+    - {{ client.email }} - {{ client.company }}
+  </li>
+  {% empty %}
+  <li>No se encontraron clientes.</li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'company_list' %}">&larr; Volver a empresas</a>  <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>¿Borrar {{ object.nombre }}?</h1>
+<p>Los clientes asociados NO se borrarán, quedarán sin empresa asignada.</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirmar</button>
+</form>

@@ -1,0 +1,12 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'comercial_list' %}">&larr; Volver a comerciales</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>Comercial</h1>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Guardar</button>
+</form>

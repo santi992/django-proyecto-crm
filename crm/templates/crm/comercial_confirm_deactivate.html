@@ -1,0 +1,16 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'comercial_list' %}">&larr; Volver a comerciales</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>¿Desactivar a {{ object.username }}?</h1>
+<p>
+  El comercial no podrá loguearse, pero su historial de clientes e interacciones
+  se conserva.
+</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirmar</button>
+</form>

@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="{% url 'client_detail' object.client.pk %}">&larr; Volver al cliente</a>  <a href="{% url 'menu' %}">&larr; Inicio</a>
+
+<h1>¿Borrar esta interacción?</h1> <a href="{% url 'menu' %}">&larr; Inicio</a>
+<p>{{ object.tipo }} - {{ object.fecha|date:"d/m/Y" }}</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirmar</button>
+</form>
