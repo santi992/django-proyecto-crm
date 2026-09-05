@@ -10,8 +10,8 @@
   <li><a href="{% url 'company_list' %}" >Empresas</a></li>
   {% if user.is_staff %}
   <li><a href="{% url 'comercial_list' %}" >Comerciales</a></li>
+  <li><a href="{% url 'stats' %}">Estadísticas</a></li>
   {% endif %}
-  <li>Estadísticas (próximamente)</li>
 </ul>
 
 {% endblock %}

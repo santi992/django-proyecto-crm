@@ -63,8 +63,12 @@
 
     <main class="max-900">
       {% block content %}
-      <!-- contenido de cada template hijo -->
+      <!-- contenido según cada template hijo -->
       {% endblock %}
     </main>
+
+    {% block scripts %}
+    <!-- script según cada template hijo -->
+    {% endblock %}
   </body>
 </html>

@@ -5,8 +5,11 @@
 {% block content %}
 
 <div class="flex sp-btween al-center">
-<h1>Clientes</h1>
-<a href="{% url 'client_create' %}" class="button button-m primary-button">Nuevo cliente</a> 
+  <h1>Clientes</h1>
+  <div>
+    <a href="{% url 'client_create' %}" class="button button-m primary-button m-inl-10">Nuevo cliente</a>
+    <a href="{% url 'client_export' %}?q={{ query }}" class="button button-m secondary-button">Exportar a Excel</a>
+  </div>
 </div>
 
 <form method="get">

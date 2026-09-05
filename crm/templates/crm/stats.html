@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Estadísticas{% endblock %}
+
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>Estadísticas</h1>
+</div>
+
+<h2 class="m-block-20">Interacciones por comercial</h2>
+{% if comerciales_stats %}
+<canvas id="graficoComerciales" style="max-height: 350px;"></canvas>
+<ul>
+  {% for comercial in comerciales_stats %}
+  <li>{{ comercial.username }} - {{ comercial.total_interacciones }} interacciones</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Todavía no hay interacciones registradas.</p>
+{% endif %}
+
+<h2 class="m-block-20">Interacciones por cliente</h2>
+{% if clientes_stats %}
+<canvas id="graficoClientes" style="max-height: 350px;"></canvas>
+<ul>
+  {% for client in clientes_stats %}
+  <li>{{ client.nombre }} {{ client.apellido }} - {{ client.total_interacciones }} interacciones</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Todavía no hay interacciones registradas.</p>
+{% endif %}
+
+<h2 class="m-block-20">Interacciones por mes</h2>
+{% if interacciones_por_mes %}
+<canvas id="graficoMeses" style="max-height: 350px;"></canvas>
+{% else %}
+<p>Todavía no hay interacciones registradas.</p>
+{% endif %}
+
+<a href="{% url 'interaction_export' %}" 
+class="button button-m primary-button">
+Exportar interacciones a Excel</a>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // ---- Gráfico 1: por comercial (barras) ----
+  {% if comerciales_stats %}
+  new Chart(document.getElementById('graficoComerciales'), {
+    type: 'bar',
+    data: {
+      labels: {{ labels_comerciales_json|safe }},
+      datasets: [{
+        label: 'Interacciones',
+        data: {{ data_comerciales_json|safe }},
+        backgroundColor: '#2980b9',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+  {% endif %}
+
+  // ---- Gráfico 2: por cliente (barras) ----
+  {% if clientes_stats %}
+  new Chart(document.getElementById('graficoClientes'), {
+    type: 'bar',
+    data: {
+      labels: {{ labels_clientes_json|safe }},
+      datasets: [{
+        label: 'Interacciones',
+        data: {{ data_clientes_json|safe }},
+        backgroundColor: '#27ae60',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+  {% endif %}
+
+  // ---- Gráfico 3: por mes (línea para mostrar evolución en el tiempo) ----
+  {% if interacciones_por_mes %}
+  new Chart(document.getElementById('graficoMeses'), {
+    type: 'line',
+    data: {
+      labels: {{ labels_meses_json|safe }},
+      datasets: [{
+        label: 'Interacciones',
+        data: {{ data_meses_json|safe }},
+        borderColor: '#e67e22',
+        backgroundColor: '#e67e22',
+        tension: 0.2,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+  {% endif %}
+</script>
+{% endblock %}

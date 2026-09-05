@@ -36,7 +36,7 @@ class Client(models.Model):
     fecha_alta = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} {self.apellido}"
 
 
 class Interaction(models.Model):

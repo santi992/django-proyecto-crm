@@ -59,4 +59,11 @@ urlpatterns = [
         name="comercial_deactivate",
     ),
     path("menu/", views.MenuView.as_view(), name="menu"),
+    path("estadisticas/", views.StatsView.as_view(), name="stats"),
+    path("clients/exportar/", views.ClientExportView.as_view(), name="client_export"),
+    path(
+        "interacciones/exportar/",
+        views.InteractionExportView.as_view(),
+        name="interaction_export",
+    ),
 ]

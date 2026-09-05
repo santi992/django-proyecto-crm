@@ -1,8 +1,18 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+from django.http import HttpResponse
+from django.views import View
+
 from django.shortcuts import get_object_or_404
+from django.db.models import Count  # Para estadísticas
+from django.db.models.functions import TruncMonth  # agrupa fechas por mes
+
 from django.db.models import Q  # Q permite armar condiciones OR/AND complejas
 from django.urls import reverse_lazy
+
+import openpyxl
+from openpyxl.styles import Font
 
 from django.views.generic import (
     ListView,
@@ -22,7 +32,6 @@ from .forms import (
     ComercialUpdateForm,
     CompanyForm,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 class LoginRequiredView(LoginRequiredMixin):
@@ -87,6 +96,122 @@ class ClientDeleteView(LoginRequiredView, DeleteView):
     model = Client
     template_name = "crm/client_confirm_delete.html"
     success_url = reverse_lazy("client_list")
+
+
+from django.http import HttpResponse
+from django.views import View
+import openpyxl
+from openpyxl.styles import Font
+
+
+class ClientExportView(LoginRequiredView, View):
+    def get(self, request):
+        # reutilizamos la misma lógica de filtro que ClientListView,
+        # así el Excel exportado coincide con lo que el usuario está viendo
+        query = request.GET.get("q", "")
+        if query:
+            clients = Client.objects.filter(
+                Q(nombre__icontains=query)
+                | Q(apellido__icontains=query)
+                | Q(email__icontains=query)
+                | Q(company__nombre__icontains=query)
+            )
+        else:
+            clients = Client.objects.all()
+
+        # Workbook: representa el archivo Excel completo en memoria
+        wb = openpyxl.Workbook()
+        # active: la primera hoja del archivo, la única que necesitamos acá
+        ws = wb.active
+        ws.title = "Clientes"
+
+        # fila de encabezados, en negrita para diferenciarla de los datos
+        headers = [
+            "Nombre",
+            "Apellido",
+            "Email",
+            "Teléfono",
+            "Empresa",
+            "Comercial",
+            "Fecha de alta",
+        ]
+        ws.append(headers)
+        for cell in ws[
+            1
+        ]:  # ws[1] es la primera fila (los encabezados que acabamos de agregar)
+            cell.font = Font(bold=True)
+
+        # una fila de datos por cada cliente
+        for client in clients:
+            ws.append(
+                [
+                    client.nombre,
+                    client.apellido,
+                    client.email,
+                    client.telefono,
+                    str(client.company) if client.company else "",
+                    str(client.comercial) if client.comercial else "",
+                    # strftime formatea la fecha sin la hora, más limpio para una planilla
+                    client.fecha_alta.strftime("%d/%m/%Y"),
+                ]
+            )
+
+        # ajustamos el ancho de cada columna automáticamente según su contenido más largo,
+        # para que no queden columnas angostas con texto cortado
+        for col_cells in ws.columns:
+            max_length = max(len(str(cell.value or "")) for cell in col_cells)
+            col_letter = col_cells[0].column_letter
+            ws.column_dimensions[col_letter].width = max_length + 2
+
+        # HttpResponse con el content_type específico de Excel le indica al navegador
+        # que descargue el archivo en vez de intentar mostrarlo como texto plano
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        # Content-Disposition "attachment" fuerza la descarga con el nombre de archivo indicado
+        response["Content-Disposition"] = 'attachment; filename="clientes.xlsx"'
+        # wb.save() normalmente escribe a un archivo en disco, pero también acepta
+        # cualquier objeto tipo "archivo" — HttpResponse funciona como uno
+        wb.save(response)
+        return response
+
+
+class InteractionExportView(LoginRequiredView, View):
+    # Exportar a Excel,
+    def get(self, request):
+        interactions = Interaction.objects.select_related("client", "comercial").all()
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Interacciones"
+
+        headers = ["Cliente", "Tipo", "Comercial", "Fecha", "Notas"]
+        ws.append(headers)
+        for cell in ws[1]:
+            cell.font = Font(bold=True)
+
+        for interaction in interactions:
+            ws.append(
+                [
+                    str(interaction.client),
+                    interaction.get_tipo_display(),
+                    str(interaction.comercial) if interaction.comercial else "",
+                    interaction.fecha.strftime("%d/%m/%Y %H:%M"),
+                    interaction.notas,
+                ]
+            )
+
+        for col_cells in ws.columns:
+            max_length = max(len(str(cell.value or "")) for cell in col_cells)
+            col_letter = col_cells[0].column_letter
+            ws.column_dimensions[col_letter].width = max_length + 2
+
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="interacciones.xlsx"'
+        wb.save(response)
+        return response
 
 
 # ---- Vistas de Empresa ----
@@ -178,7 +303,6 @@ class ComercialListView(AdminRequiredView, ListView):
 
     def get_queryset(self):
         query = self.request.GET.get("q", "")
-        base = User.objects.filter(is_staff=False).order_by("username")
         base = User.objects.all().order_by("username")
         if query:
             return base.filter(
@@ -222,3 +346,61 @@ class ComercialDeactivateView(AdminRequiredView, UpdateView):
 
 class MenuView(LoginRequiredView, TemplateView):
     template_name = "crm/menu.html"
+
+
+# ---- Vistas de Estadísticas ----
+
+
+class StatsView(AdminRequiredView, TemplateView):
+    template_name = "crm/stats.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        import json
+
+        # ---- Interacciones por comercial ----
+        comerciales_stats = (
+            User.objects.annotate(total_interacciones=Count("interacciones_realizadas"))
+            .filter(total_interacciones__gt=0)
+            .order_by("-total_interacciones")
+        )
+        context["comerciales_stats"] = comerciales_stats
+        context["labels_comerciales_json"] = json.dumps(
+            [c.username for c in comerciales_stats]
+        )
+        context["data_comerciales_json"] = json.dumps(
+            [c.total_interacciones for c in comerciales_stats]
+        )
+
+        # ---- Interacciones por cliente ----
+        clientes_stats = (
+            Client.objects.annotate(total_interacciones=Count("interactions"))
+            .filter(total_interacciones__gt=0)
+            .order_by("-total_interacciones")
+        )
+        context["clientes_stats"] = clientes_stats
+        context["labels_clientes_json"] = json.dumps(
+            [f"{c.nombre} {c.apellido}" for c in clientes_stats]
+        )
+        context["data_clientes_json"] = json.dumps(
+            [c.total_interacciones for c in clientes_stats]
+        )
+
+        # ---- Interacciones por mes ----
+        interacciones_por_mes = (
+            Interaction.objects.annotate(mes=TruncMonth("fecha"))
+            .values("mes")  # agrupamos por mes
+            .annotate(
+                total=Count("id")
+            )  # contamos cuántas interacciones caen en cada mes
+            .order_by("mes")  # orden cronológico, de más antiguo a más reciente
+        )
+        context["interacciones_por_mes"] = interacciones_por_mes
+        context["labels_meses_json"] = json.dumps(
+            [item["mes"].strftime("%b %Y") for item in interacciones_por_mes]
+        )
+        context["data_meses_json"] = json.dumps(
+            [item["total"] for item in interacciones_por_mes]
+        )
+
+        return context
