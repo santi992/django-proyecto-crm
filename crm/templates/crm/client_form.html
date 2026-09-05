@@ -1,12 +1,17 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'client_list' %}">&larr; Volver a clientes</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Clientes{% endblock %}
 
-<h1>Formulario de cliente</h1>
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>Formulario de cliente</h1>
+  <a href="{% url 'client_list' %}" class="button button-m secondary-button">&larr; Volver a clientes</a>
+</div>
+
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Guardar</button>
+  <button type="submit" class="button button-m primary-button">Guardar</button>
 </form>
+
+{% endblock %}

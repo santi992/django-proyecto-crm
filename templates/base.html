@@ -1,0 +1,68 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <!-- Título para el navegador y los buscadores -->
+    <title>{% block title %}CRM{% endblock %}</title>
+
+    <!-- Descripción de la página para los buscadores -->
+    <meta
+      name="description"
+      content="Proyecto Django para el Master de Desarrolo Web Full Stack de Conquerblocks"
+    />
+
+    <!-- Palabras clave para los buscadores -->
+    <meta
+      name="keywords"
+      content="conquerblocks, django, fullstack, full stack"
+    />
+
+    <!-- Autor de la página -->
+    <meta name="author" content="Santiago Sáanchez" />
+
+    <!-- Favicon de la página -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+    <!-- Codificación-->
+    <meta charset="UTF-8" />
+
+    <!-- Para que la web sea responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Para algunos navegadores móviles -->
+    <meta name="theme-color" content="#1e7bbf" />
+
+    <!-- Hoja de estilos -->
+    <link rel="stylesheet" href="{% static '/css/normalize.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/boilerplate.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/button.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/utilities.css' %}" />
+  </head>
+  <body>
+    {% if user.is_authenticated %}
+    <header>
+      <nav>
+        <a href="{% url 'menu' %}">Menú</a>
+        <a href="{% url 'client_list' %}">Clientes</a>
+        <a href="{% url 'company_list' %}">Empresas</a>
+        {% if user.is_staff %}
+        <a href="{% url 'comercial_list' %}">Comerciales</a>
+        {% endif %}
+      </nav>
+      <form method="post" action="{% url 'logout' %}" style="display: inline">
+        {% csrf_token %}
+        <button type="submit" class="button button-m primary-button">
+          Cerrar sesión
+        </button>
+      </form>
+    </header>
+    {% endif %}
+
+    <main>
+      {% block content %}
+      <!-- contenido de cada template hijo -->
+      {% endblock %}
+    </main>
+  </body>
+</html>

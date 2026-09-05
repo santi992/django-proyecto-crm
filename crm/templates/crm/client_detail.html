@@ -1,21 +1,26 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'client_list' %}">&larr; Volver a clientes</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Clientes{% endblock %}
 
-<h1>{{ client.nombre }} {{ client.apellido}}</h1>
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>{{ client.nombre }} {{ client.apellido}}</h1>
+  <a href="{% url 'client_list' %}"  class="button button-m secondary-button">&larr; Volver a clientes</a>
+</div>
+
 <p>Email: {{ client.email }}</p>
 <p>Empresa: {{ client.company }}</p>
 <p>Comercial: {{ client.comercial }}</p>
 <a href="{% url 'client_update' client.pk %}">Editar</a>
 <a href="{% url 'client_delete' client.pk %}">Borrar</a>
 
-<h2>Interacciones</h2>
-<a href="{% url 'interaction_create' client.pk %}">Nueva interacción</a>
+<div class="flex al-center">
+  <h2>Interacciones</h2>
+  <a href="{% url 'interaction_create' client.pk %}" class="button button-m primary-button m-inl-10">Nueva interacción</a>
+</div>
+
 <ul>
-  <!-- client.interactions viene del related_name que definimos en el modelo -->
   {% for interaction in client.interactions.all %}
   <li>
     {{ interaction.fecha|date:"d/m/Y H:i" }} - {{ interaction.tipo }} -
@@ -27,3 +32,5 @@
   <li>Sin interacciones todavía.</li>
   {% endfor %}
 </ul>
+
+{% endblock %}

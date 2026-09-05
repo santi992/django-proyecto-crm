@@ -1,0 +1,19 @@
+.flex {
+  display: flex;
+}
+
+.sp-btween {
+  justify-content: space-between;
+}
+
+.al-center {
+  align-items: center;
+}
+
+.m-block-20 {
+  margin-block: 20px;
+}
+
+.m-inl-10 {
+  margin-inline-start: 10px;
+}

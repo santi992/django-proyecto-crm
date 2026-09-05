@@ -1,12 +1,17 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'company_list' %}">&larr; Volver a empresas</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Empresas{% endblock %}
 
-<h1>Empresa</h1>
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>Empresa</h1>
+  <a href="{% url 'company_list' %}" class="button button-m secondary-button">&larr; Volver a empresas</a>
+</div>
+
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Guardar</button>
+  <button type="submit" class="button button-m primary-button">Guardar</button>
 </form>
+
+{% endblock %}

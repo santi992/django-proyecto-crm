@@ -1,12 +1,17 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'client_detail' client.pk %}">&larr; Volver al cliente</a>  <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Interacciones{% endblock %}
 
-<h1>Nueva interacción para {{ client.nombre }}</h1>
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>Nueva interacción para {{ client.nombre }}</h1>
+  <a href="{% url 'client_detail' client.pk %}">&larr; Volver al cliente</a> 
+</div>
+
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Guardar</button>
+  <button type="submit" class="button button-m primary-button">Guardar</button>
 </form>
+
+{% endblock %}

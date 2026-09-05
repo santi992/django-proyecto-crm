@@ -1,13 +1,13 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Comercial{% endblock %}
 
-<h1>Comerciales</h1>
+{% block content %}
 
-<a href="{% url 'comercial_create' %}">Nuevo comercial</a> 
+<div class="flex sp-btween al-center">
+  <h1>Comerciales</h1>
+  <a href="{% url 'comercial_create' %}" class="button button-m primary-button">Nuevo comercial</a> 
+</div>
 
 <form method="get">
   <input type="text" name="q" value="{{ query }}" placeholder="Username, email, nombre o apellido">
@@ -29,3 +29,5 @@
   <li>No hay comerciales cargados.</li>
   {% endfor %}
 </ul>
+
+{% endblock %}

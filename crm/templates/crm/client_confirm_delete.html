@@ -1,12 +1,17 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'client_list' %}">&larr; Volver a clientes</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
 
 <h1>¿Borrar a {{ client.nombre }} {{ client.apellido }}?</h1>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Confirmar</button>
-</form>
+
+<div class="flex al-center">
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="button button-m primary-button">Confirmar</button>
+  </form>
+  <a href="{% url 'client_list' %}" class="button button-s secondary-button m-inl-10">&larr; Volver a clientes</a>
+</div>
+
+{% endblock %}

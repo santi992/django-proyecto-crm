@@ -1,12 +1,17 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'comercial_list' %}">&larr; Volver a comerciales</a> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Comercial{% endblock %}
 
-<h1>Comercial</h1>
+{% block content %}
+
+<div class="flex sp-btween al-center">
+  <h1>Comercial</h1>
+  <a href="{% url 'comercial_list' %}" class="button button-m secondary-button">&larr; Volver a comerciales</a>
+</div>
+
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Guardar</button>
+  <button type="submit"  class="button button-m primary-button">Guardar</button>
 </form>
+
+{% endblock %}

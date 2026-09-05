@@ -1,13 +1,19 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'client_detail' object.client.pk %}">&larr; Volver al cliente</a>  <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Interacciones{% endblock %}
 
-<h1>¿Borrar esta interacción?</h1> <a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block content %}
+
+<h1>¿Borrar esta interacción?</h1>
 <p>{{ object.tipo }} - {{ object.fecha|date:"d/m/Y" }}</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Confirmar</button>
-</form>
+
+
+<div class="flex al-center">
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="button button-m primary-button">Confirmar</button>
+  </form>
+  <a href="{% url 'client_detail' object.client.pk %}" class="button button-s secondary-button m-inl-10">&larr; Volver al cliente</a> 
+</div>
+
+{% endblock %}

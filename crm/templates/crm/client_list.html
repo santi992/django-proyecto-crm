@@ -1,13 +1,13 @@
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Cerrar sesión</button>
-</form>
+{% extends 'base.html' %}
 
-<a href="{% url 'menu' %}">&larr; Inicio</a>
+{% block title %}Clientes{% endblock %}
 
+{% block content %}
+
+<div class="flex sp-btween al-center">
 <h1>Clientes</h1>
-
-<a href="{% url 'client_create' %}">Nuevo cliente</a> 
+<a href="{% url 'client_create' %}" class="button button-m primary-button">Nuevo cliente</a> 
+</div>
 
 <form method="get">
   <input
@@ -29,3 +29,5 @@
   <li>No se encontraron clientes.</li>
   {% endfor %}
 </ul>
+
+{% endblock %}
